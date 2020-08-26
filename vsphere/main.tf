@@ -36,13 +36,13 @@ resource "vsphere_virtual_machine" "vm" {
   resource_pool_id = data.vsphere_resource_pool.pool.id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus = 4
+  memory = 8000
   host_system_id             = data.vsphere_host.host.id
   wait_for_guest_net_timeout = 0
   wait_for_guest_ip_timeout  = 0
   datacenter_id              = data.vsphere_datacenter.dc.id
   ovf_deploy {
     remote_ovf_url       = "https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.ova"
-    disk_provisioning    = "thin"
   }
 
   network_interface {
