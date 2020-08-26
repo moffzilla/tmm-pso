@@ -32,7 +32,7 @@ resource "vsphere_virtual_machine" "vm" {
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus = 2
   ovf_deploy {
-    local_ovf_path       = "https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.ova"
+    remote_ovf_url       = "https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.ova"
     disk_provisioning    = "thin"
   }
 
