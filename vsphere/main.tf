@@ -29,16 +29,15 @@ data "vsphere_network" "network" {
 # Retrieve template information on vsphere
 data "vsphere_virtual_machine" "template" {
   name          = "ubuntu1804bis"
-  datacenter_id = data.vsphere_datacenter.dc.id
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
 resource "vsphere_virtual_machine" "vm" {
   name             = "terraform-test"
   resource_pool_id = data.vsphere_resource_pool.pool.id
   datastore_id     = data.vsphere_datastore.datastore.id
-
   num_cpus = 2
-  guest_id         = data.vsphere_virtual_machine.template.guest_id
+  thin_provisioned = true
 
   network_interface {
     network_id = data.vsphere_network.network.id
@@ -49,7 +48,3 @@ resource "vsphere_virtual_machine" "vm" {
     size  = 20
   }
 }
-
-  clone {
-    template_uuid = data.vsphere_virtual_machine.template.id
-  }
