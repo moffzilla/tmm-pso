@@ -27,7 +27,7 @@ data "vsphere_network" "network" {
 }
 
 data "vsphere_host" "host" {
-  name          = "hostip"
+  name          = "esx-01a.corp.local"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
