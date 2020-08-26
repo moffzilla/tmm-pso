@@ -26,6 +26,11 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+data "vsphere_virtual_machine" "template" {
+  name          = "ubuntu1804bis"
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
 resource "vsphere_virtual_machine" "vm" {
   name             = "terraform-test"
   resource_pool_id = data.vsphere_resource_pool.pool.id
@@ -33,7 +38,7 @@ resource "vsphere_virtual_machine" "vm" {
 
   num_cpus = 2
   memory   = 1024
-  guest_id = "ubuntu1804bis"
+  guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
 
   network_interface {
     network_id = data.vsphere_network.network.id
@@ -44,3 +49,7 @@ resource "vsphere_virtual_machine" "vm" {
     size  = 20
   }
 }
+
+  clone {
+    template_uuid = "${data.vsphere_virtual_machine.template.id}"
+  }
