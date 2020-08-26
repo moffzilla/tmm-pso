@@ -26,18 +26,15 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-# Retrieve template information on vsphere
-data "vsphere_virtual_machine" "template" {
-  name          = "ubuntu1804bis"
-  datacenter_id = "${data.vsphere_datacenter.dc.id}"
-}
-
 resource "vsphere_virtual_machine" "vm" {
   name             = "terraform-test"
   resource_pool_id = data.vsphere_resource_pool.pool.id
   datastore_id     = data.vsphere_datastore.datastore.id
   num_cpus = 2
-  guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
+  ovf_deploy {
+    local_ovf_path       = "https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.ova"
+    disk_provisioning    = "thin"
+  }
 
   network_interface {
     network_id = data.vsphere_network.network.id
