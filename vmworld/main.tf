@@ -22,7 +22,6 @@ resource "aws_instance" "machine2" {
 }
 
 output "instance_ips" {
-  value = ["${aws_instance.machine1.*.public_ip}"]
-  value2 = ["${aws_instance.machine2.*.public_ip}"]
+  value = ["${aws_instance.machine*.*.public_ip}"]
 }
 
