@@ -25,7 +25,7 @@ output "instance_ips" {
   value = ["${aws_instance.machine1.*.public_ip}"]
 }
 
-output "instance_ips" {
+output "instance_ips2" {
   value = ["${aws_instance.machine2.*.public_ip}"]
 }
 
