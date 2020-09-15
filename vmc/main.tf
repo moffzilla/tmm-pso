@@ -1,10 +1,10 @@
 provider vmc {
   refresh_token = var.api_token
-  #org_id = var.org_id
+  org_id = var.org_id
 }
 
 data "vmc_connected_accounts" "my_accounts" {
-  #account_number = var.aws_account_number
+  account_number = var.aws_account_number
 }
 
 resource "vmc_sddc" "sddc_1" {
