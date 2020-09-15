@@ -4,6 +4,9 @@ variable org_id {
 }
 variable aws_account_number {
 }
+variable num_host {
+  default = "3"
+}
 variable sddc_name {    
   default = "Terraform-SDDC"
 }
