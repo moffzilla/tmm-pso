@@ -8,49 +8,59 @@ provider "vsphere" {
 }
 
 data "vsphere_datacenter" "dc" {
-  name = "RegionA01"
+  name = var.vsphere_datacenter
 }
 
 data "vsphere_datastore" "datastore" {
-  name          = "RegionA01-ISCSI02-COMP01"
-  datacenter_id = data.vsphere_datacenter.dc.id
+  name          = var.vsphere_datastore
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
 data "vsphere_resource_pool" "pool" {
-  name          = "pks-comp-1"
-  datacenter_id = data.vsphere_datacenter.dc.id
+  name          = var.vsphere_resource_pool
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
+}
+
+data "vsphere_compute_cluster" "cluster" {
+  name          = var.vsphere_compute_cluster
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
 data "vsphere_network" "network" {
-  name          = "VM-RegionA01-vDS-COMP"
-  datacenter_id = data.vsphere_datacenter.dc.id
+  name          = var.vsphere_network
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
-data "vsphere_host" "host" {
-  name          = "esx-01a.corp.local"
-  datacenter_id = data.vsphere_datacenter.dc.id
+data "vsphere_virtual_machine" "template" {
+  name          = var.vsphere_virtual_machine
+  datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
 resource "vsphere_virtual_machine" "vm" {
-  name             = "terraform-test"
-  resource_pool_id = data.vsphere_resource_pool.pool.id
-  datastore_id     = data.vsphere_datastore.datastore.id
-  num_cpus = 4
-  memory = 8000
-  host_system_id             = data.vsphere_host.host.id
-  wait_for_guest_net_timeout = 0
-  wait_for_guest_ip_timeout  = 0
-  datacenter_id              = data.vsphere_datacenter.dc.id
-  ovf_deploy {
-    remote_ovf_url       = "https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.ova"
-  }
+  name             = var.virtual_machine_name
+  resource_pool_id = "${data.vsphere_resource_pool.pool.id}"
+  datastore_id     = "${data.vsphere_datastore.datastore.id}"
+
+  num_cpus = var.num_cpus
+  memory   = var.memory
+  guest_id = "${data.vsphere_virtual_machine.template.guest_id}"
+
+  scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
 
   network_interface {
-    network_id = data.vsphere_network.network.id
+    network_id   = "${data.vsphere_network.network.id}"
+    adapter_type = "${data.vsphere_virtual_machine.template.network_interface_types[0]}"
   }
 
   disk {
-    label = "disk0"
-    size  = 20
+    label            = "disk0"
+    size             = "${data.vsphere_virtual_machine.template.disks.0.size}"
+    eagerly_scrub    = "${data.vsphere_virtual_machine.template.disks.0.eagerly_scrub}"
+    thin_provisioned = "${data.vsphere_virtual_machine.template.disks.0.thin_provisioned}"
   }
+
+  clone {
+    template_uuid = "${data.vsphere_virtual_machine.template.id}"
+
+    }
 }
