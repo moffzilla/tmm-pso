@@ -116,7 +116,7 @@ inputs:
       - small
   Image:
     type: string
-    title: Flavor
+    title: Image 
     enum:
       - ubuntu-xenial
       - ubuntu-bionic
@@ -139,4 +139,21 @@ resources:
         - tag: 'cloud:aws'
   EOT
 }
+
+output "blueprint-ID" {
+  description = "Cloud Template ID"
+  value       = vra_blueprint.this.id
+}
+
+output "blueprint-name" {
+  description = "Cloud Template ID"
+  value       = vra_blueprint.this.name
+}
+
+
+output "Project-ID" {
+  description = "Project ID"
+  value       = vra_blueprint.this.project_id
+}
+
 
